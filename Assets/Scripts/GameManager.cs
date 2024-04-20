@@ -18,22 +18,26 @@ public class GameManager : MonoBehaviour
     public static int NpcCount = 3;
     int currentIteration = 0;
 
-    [SerializeField]
-    public Dictionary<int, string> Actors;
-    [SerializeField]
+    public Dictionary<int, string> Actors;    
     public Dictionary<string, int> ActorKeys;
-    [SerializeField]
+    
     public Dictionary<int, string> ActorQuestions;
-    [SerializeField]
+    
     public Dictionary<int, string> ActorAnswer;
-    [SerializeField]
+    
     public Dictionary<int, string> QuestionList;
-    [SerializeField]
+    public Dictionary<string, int> QuestionListKeys;
+
     public Dictionary<int, string> Npc1Answers;
-    [SerializeField]
+    
     public Dictionary<int, string> Npc2Answers;
-    [SerializeField]
+    
     public Dictionary<int, string> Npc3Answers;
+
+    List<int> questionsUsed = new List<int>();
+    List<string> questionOptions = new List<string>();
+
+    UIManager uiManager;
 
 
     // Start is called before the first frame update
@@ -51,6 +55,11 @@ public class GameManager : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+            uiManager = UIManager.instance;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -58,22 +67,23 @@ public class GameManager : MonoBehaviour
         {
             // the intro state
             case GameState.Start:
-                //Debug.Log("Start");
+                //TODO put in info dump;
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    ChangeGameState(NextGameState);
+                    ChangeGameState(GameState.Wait);
                     break;
                 }
-
-
-                ChangeGameState(GameState.Wait);
                 break;
             
             //The inbetween state
             case GameState.Wait:
+                UIResetInWait();
+                uiManager.ShowHotseatSwitch();
+
                 //Debug.Log("Wait");
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
+                    uiManager.HideHotseatSwitch();
                     ChangeGameState (NextGameState); 
                     break;
                 }
@@ -83,18 +93,18 @@ public class GameManager : MonoBehaviour
             //The player q pick state
             case GameState.PickQuestion:
                 //Debug.Log("PickQuestion");
-                
+                uiManager.ShowQuestionSelect();
+                RandomizeQuistionOptions();
+
+
                 if (currentIteration == CurrentPlayer)
                 {
                     PreviousPlayer = CurrentPlayer;
                     CurrentPlayer = NextPlayer;
                     NextPlayer++;
-                    currentIteration++;
+                    
                 }
-                else
-                {
-                    currentIteration++;
-                }
+                
                 
                 //check before going to wait
                 if(CurrentPlayer == PlayerAmount)
@@ -210,6 +220,54 @@ public class GameManager : MonoBehaviour
     public void ChangePreviuosGameState(GameState state)
     {
         PreviousGameState = state;
+    }
+
+    void UIResetInWait()
+    {
+        uiManager.HideQuestionSelect();
+        uiManager.HideAnswerSubmit();
+        uiManager.HideFinalChoice();
+    }
+
+    void RandomizeQuistionOptions()
+    { 
+        questionOptions.Clear();
+        int count = 1;
+        List<int> questionsInUse = new List<int>();
+        while (true) 
+        {
+            if (count > 5) 
+            {
+                break;
+            }
+            int key = 0;
+            int questionCount = 0;
+            questionCount = QuestionList.Count;
+
+            if (questionOptions.Count < 1)
+            {
+                key = Random.Range(1, questionCount);
+                string quest = QuestionList[key];
+                questionOptions.Add(quest);
+                count++;
+            }
+            
+            if (questionsInUse.Count > 0 && !questionsInUse.Contains(key))
+            {
+                string quest = QuestionList[key];
+                questionOptions.Add(quest);
+                count++;
+            } 
+            else
+            {
+                key = Random.Range(1, questionCount);
+            }
+            
+              
+        }
+
+        uiManager.SetQuestionOptions(questionOptions);
+        
     }
 
 }

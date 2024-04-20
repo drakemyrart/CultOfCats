@@ -26,19 +26,22 @@ public class LoadStrings : MonoBehaviour
     public void LoadDictionary(string filename, DictName dictname)
     {
         Dictionary<int, string> dict = new Dictionary<int, string>();
+        Dictionary<string, int> dictKeys = new Dictionary<string, int>();
 
-        
+
         string[] allWords = File.ReadAllLines(Path.Combine(Application.streamingAssetsPath, filename));
         int key = 1;
         foreach (string word in allWords) 
         {
             dict[key] = word;
+            dictKeys[word] = key;
             key++;
         }
 
         if (dictname == DictName.QuestionList)
         {
             gameManager.QuestionList = dict;
+            gameManager.QuestionListKeys = dictKeys;
             
         }
         else if (dictname == DictName.Npc1Answers)

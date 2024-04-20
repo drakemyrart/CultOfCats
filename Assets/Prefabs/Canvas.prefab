@@ -4237,6 +4237,7 @@ MonoBehaviour:
   inputfield_submitAnswer: {fileID: 54086127053895280}
   answerSubmitted: 
   panel_HotseatSwitch: {fileID: 6573697262430880653}
+  panel_FinalChoice: {fileID: 755455249681170979}
   player1Sprite: {fileID: 0}
   player2Sprite: {fileID: 0}
   playerChoiceCharacter: 0

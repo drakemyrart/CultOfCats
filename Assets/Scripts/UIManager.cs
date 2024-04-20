@@ -20,6 +20,7 @@ enum FinalChoiceDecision
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager instance;
     // Question
     [SerializeField] GameObject panel_questionSelect;
     [SerializeField] TMP_Dropdown dropdown_selectQuestion;
@@ -35,6 +36,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject panel_HotseatSwitch;
 
     // Final Choice
+    [SerializeField] GameObject panel_FinalChoice;
     [SerializeField] Sprite player1Sprite;
     [SerializeField] Sprite player2Sprite;
     [SerializeField] FinalChoiceCharacter playerChoiceCharacter;
@@ -43,9 +45,17 @@ public class UIManager : MonoBehaviour
     // Testing
     List<string> testQuestions;
 
+    private void Awake()
+    {
+            instance = this;
+    }
     private void Start()
     {
         //testQuestions = new List<string>() { "Q1", "Q2", "Q3" };
+        HideHotseatSwitch(); 
+        HideQuestionSelect();   
+        HideAnswerSubmit();
+        HideFinalChoice();
     }
 
     private void Update()
@@ -117,6 +127,16 @@ public class UIManager : MonoBehaviour
 
     // ------- Final Choice: Select other human, then Escape or Report --------------------------
     // this will show the images of the 4 others, needs to be dynamic to swap out one player's image for the other
+    // ------- Final Choice change --------------------------
+    public void ShowFinalChoice()
+    {
+        panel_FinalChoice.SetActive(true);
+    }
+    public void HideFinalChoice()
+    {
+        panel_FinalChoice.SetActive(false);
+    }
+
     public void SelectTargetCharacter(int character)
     {
         if (character == 0) // 0 is the value for any NPC
