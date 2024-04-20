@@ -18,13 +18,21 @@ public class GameManager : MonoBehaviour
     public static int NpcCount = 3;
     int currentIteration = 0;
 
+    [SerializeField]
     public Dictionary<int, string> Actors;
+    [SerializeField]
     public Dictionary<string, int> ActorKeys;
+    [SerializeField]
     public Dictionary<int, string> ActorQuestions;
+    [SerializeField]
     public Dictionary<int, string> ActorAnswer;
+    [SerializeField]
     public Dictionary<int, string> QuestionList;
+    [SerializeField]
     public Dictionary<int, string> Npc1Answers;
+    [SerializeField]
     public Dictionary<int, string> Npc2Answers;
+    [SerializeField]
     public Dictionary<int, string> Npc3Answers;
 
 
@@ -50,12 +58,20 @@ public class GameManager : MonoBehaviour
         {
             // the intro state
             case GameState.Start:
+                //Debug.Log("Start");
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    ChangeGameState(NextGameState);
+                    break;
+                }
+
 
                 ChangeGameState(GameState.Wait);
                 break;
             
             //The inbetween state
             case GameState.Wait:
+                //Debug.Log("Wait");
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     ChangeGameState (NextGameState); 
@@ -66,6 +82,8 @@ public class GameManager : MonoBehaviour
 
             //The player q pick state
             case GameState.PickQuestion:
+                //Debug.Log("PickQuestion");
+                
                 if (currentIteration == CurrentPlayer)
                 {
                     PreviousPlayer = CurrentPlayer;
