@@ -21,6 +21,7 @@ enum FinalChoiceDecision
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
+    GameManager gameManager;
     // Question
     [SerializeField] GameObject panel_questionSelect;
     [SerializeField] TMP_Dropdown dropdown_selectQuestion;
@@ -52,6 +53,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         //testQuestions = new List<string>() { "Q1", "Q2", "Q3" };
+        gameManager = GameManager.instance;
         HideHotseatSwitch(); 
         HideQuestionSelect();   
         HideAnswerSubmit();

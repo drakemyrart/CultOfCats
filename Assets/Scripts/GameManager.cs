@@ -16,7 +16,11 @@ public class GameManager : MonoBehaviour
     public static int PreviousPlayer = 0;
     public static int PlayerAmount = 2;
     public static int NpcCount = 3;
+    public static int CurrentActor = 1;
+    public static int ActorAmount = 5;
     int currentIteration = 0;
+
+    bool inStateOfChoice = false;
 
     public Dictionary<int, string> Actors;    
     public Dictionary<string, int> ActorKeys;
@@ -92,34 +96,20 @@ public class GameManager : MonoBehaviour
 
             //The player q pick state
             case GameState.PickQuestion:
-                //Debug.Log("PickQuestion");
+                
                 uiManager.ShowQuestionSelect();
-                RandomizeQuistionOptions();
+                if (!inStateOfChoice)
+                {
+                    Debug.Log("PickQuestion");
+                    inStateOfChoice = true;
+                    RandomizeQuistionOptions();
+                    break;
+                }
 
 
-                if (currentIteration == CurrentPlayer)
-                {
-                    PreviousPlayer = CurrentPlayer;
-                    CurrentPlayer = NextPlayer;
-                    NextPlayer++;
-                    
-                }
-                
-                
-                //check before going to wait
-                if(CurrentPlayer == PlayerAmount)
-                {
-                    ChangeNextGameState (GameState.AIPickQuestion);
-
-                }
-                else
-                {
-                    ChangeNextGameState (CurrentGameState);
-                    ChangePreviuosGameState (GameState.Wait);
-                }
                 break;
 
-            //The ai q pick state
+            //The ai q pick state 
             case GameState.AIPickQuestion:
                 currentIteration = 0;
                 CurrentPlayer = 1;
@@ -131,28 +121,7 @@ public class GameManager : MonoBehaviour
 
             //The player answer state
             case GameState.Answer:
-                if (currentIteration == CurrentPlayer)
-                {
-                    PreviousPlayer = CurrentPlayer;
-                    CurrentPlayer = NextPlayer;
-                    NextPlayer++;
-                    currentIteration++;
-                }
-                else
-                {
-                    currentIteration++;
-                }
-
-                //check before going to wait
-                if (CurrentPlayer == PlayerAmount)
-                {
-                    ChangeNextGameState(GameState.AIAnswer);
-                }
-                else
-                {
-                    ChangeNextGameState(CurrentGameState);
-                    ChangePreviuosGameState(GameState.Wait);
-                }
+               
                 break;
 
             //The ai answer state
@@ -174,29 +143,7 @@ public class GameManager : MonoBehaviour
 
             //The player choice state
             case GameState.Choice:
-                if (currentIteration == CurrentPlayer)
-                {
-                    PreviousPlayer = CurrentPlayer;
-                    CurrentPlayer = NextPlayer;
-                    NextPlayer++;
-                    currentIteration++;
-                }
-                else
-                {
-                    currentIteration++;
-                }
-
-                //check before going to wait
-                if (CurrentPlayer == PlayerAmount)
-                {
-                    ChangeNextGameState(GameState.AIPickQuestion);
-
-                }
-                else
-                {
-                    ChangeNextGameState(CurrentGameState);
-                    ChangePreviuosGameState(GameState.Wait);
-                }
+                
                 break;
                 
 
@@ -230,44 +177,76 @@ public class GameManager : MonoBehaviour
     }
 
     void RandomizeQuistionOptions()
-    { 
-        questionOptions.Clear();
+    {
+        int key;
         int count = 1;
-        List<int> questionsInUse = new List<int>();
-        while (true) 
+        List<int> keys = new List<int>();
+        if(questionOptions.Count > 0) 
         {
-            if (count > 5) 
-            {
-                break;
-            }
-            int key = 0;
-            int questionCount = 0;
-            questionCount = QuestionList.Count;
-
-            if (questionOptions.Count < 1)
-            {
-                key = Random.Range(1, questionCount);
-                string quest = QuestionList[key];
-                questionOptions.Add(quest);
-                count++;
-            }
-            
-            if (questionsInUse.Count > 0 && !questionsInUse.Contains(key))
-            {
-                string quest = QuestionList[key];
-                questionOptions.Add(quest);
-                count++;
-            } 
-            else
-            {
-                key = Random.Range(1, questionCount);
-            }
-            
-              
+            questionOptions.Clear();
         }
 
-        uiManager.SetQuestionOptions(questionOptions);
-        
+        if (QuestionList.Count > 0)
+        {
+            while (count < 6)
+            {
+                if(count == 1)
+                {
+                    key = Random.Range(1, QuestionList.Count);
+                    string quest = QuestionList[key];
+                    questionOptions.Add(quest);
+                    keys.Add(key);
+                    count++;
+                    Debug.Log(key);
+                }
+                else if (count > questionOptions.Count)
+                {
+                    
+                    key = Random.Range(1, QuestionList.Count);
+                    if (!keys.Contains(key) && !questionsUsed.Contains(key))
+                    {
+                        string quest = QuestionList[key];
+                        questionOptions.Add(quest);
+                        count++;
+                        Debug.Log(key);
+                    }
+                    
+                }
+            }
+            if(questionOptions.Count > 0) 
+            {
+                uiManager.SetQuestionOptions(questionOptions);
+            }
+            
+            
+        }
+
+    }
+
+    public void LockInQuestions(string quest)
+    {
+        int questKey = 0;
+        ActorQuestions[CurrentActor] = quest;
+        currentIteration++;
+        CurrentActor++;
+        questKey = QuestionListKeys[quest];
+        questionsUsed.Add(questKey);
+        if (CurrentActor < (PlayerAmount+1))
+        {
+            NextGameState = GameState.PickQuestion;
+            ChangeGameState(GameState.Wait);
+            inStateOfChoice = false;
+        }
+        else if (CurrentActor < (ActorAmount + 1))
+        {
+            NextGameState = GameState.AIPickQuestion;
+        }
+        else
+        {
+            NextGameState = GameState.Answer;
+            ChangeGameState(GameState.Wait);
+        }
+
     }
 
 }
