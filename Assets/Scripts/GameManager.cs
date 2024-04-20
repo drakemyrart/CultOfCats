@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-    static GameManager instance;
+    public static GameManager instance;
     public static GameState CurrentGameState;
     public static GameState NextGameState;
     public static GameState PreviousGameState;
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
             // the intro state
             case GameState.Start:
 
-                ChangeGameState(NextGameState);
+                ChangeGameState(GameState.Wait);
                 break;
             
             //The inbetween state
