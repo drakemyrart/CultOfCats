@@ -91,6 +91,7 @@ public class UIManager : MonoBehaviour
     }
     public void SetQuestionOptions(List<string> questions)
     {
+        dropdown_selectQuestion.options.Clear();
         foreach (string t in questions)
         {
             dropdown_selectQuestion.options.Add(new TMP_Dropdown.OptionData() { text = t });
@@ -101,6 +102,7 @@ public class UIManager : MonoBehaviour
     {
         int answerSelected = dropdown_selectQuestion.value;
         questionSelected = dropdown_selectQuestion.options[dropdown_selectQuestion.value].text;
+        gameManager.LockInQuestions(questionSelected);
         //Debug.Log("Player selected: " + questionSelected);
     }
 
