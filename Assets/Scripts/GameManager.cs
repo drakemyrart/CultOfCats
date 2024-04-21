@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour
     
     public Dictionary<int, string> Actor1Answers;
     public Dictionary<int, string> Actor2Answers;
+    public Dictionary<int, string> Actor3Answers;
+    public Dictionary<int, string> Actor4Answers;
+    public Dictionary<int, string> Actor5Answers;
+    
 
     public Dictionary<int, string> QuestionList;
     public Dictionary<string, int> QuestionListKeys;
@@ -55,6 +59,9 @@ public class GameManager : MonoBehaviour
         ActorQuestions = new Dictionary<int, string>();
         Actor1Answers = new Dictionary<int, string>();
         Actor2Answers = new Dictionary<int, string>();
+        Actor3Answers = new Dictionary<int, string>();
+        Actor4Answers = new Dictionary<int, string>();
+        Actor5Answers = new Dictionary<int, string>();
         Npc1Answers = new Dictionary<int, string>();
         Npc2Answers = new Dictionary<int, string>();
         Npc3Answers = new Dictionary<int, string>();
@@ -130,17 +137,26 @@ public class GameManager : MonoBehaviour
 
             //The player answer state
             case GameState.Answer:
-               
+                uiManager.ShowAnswerSubmit();
+                if (!inStateOfChoice)
+                {
+                    inStateOfChoice = true;
+                    Debug.Log("Answer");
+                    break;
+                }
+
                 break;
 
             //The ai answer state
             case GameState.AIAnswer:
-                currentIteration = 0;
-                CurrentPlayer = 1;
-                NextPlayer = 2;
+                if (!inStateOfChoice)
+                {
+                    Debug.Log("AIAnswer");
+                    inStateOfChoice = true;
+                    RandomizeAnswerAI();
+                    break;
+                }
 
-                ChangeNextGameState(GameState.Reveal);
-                ChangeGameState(GameState.Wait);
                 break;
 
             //The question and answer state
@@ -257,6 +273,29 @@ public class GameManager : MonoBehaviour
             LockInQuestions(quest);
         }
     }
+    void RandomizeAnswerAI()
+    {
+        string quest = "";
+        int key;
+        int count = 1;
+        if (CurrentActor == 3)
+        {
+            key = Random.Range(1, Npc1Answers.Count);
+            quest = Npc1Answers[key];
+
+        }
+        else if (CurrentActor == 4)
+        {
+            key = Random.Range(1, Npc2Answers.Count);
+            quest = Npc2Answers[key];
+        }
+        else if (CurrentActor == 5)
+        {
+            key = Random.Range(1, Npc3Answers.Count);
+            quest = Npc3Answers[key];
+        }
+        LockInAnswers(quest);
+    }
 
     public void LockInQuestions(string quest)
     {
@@ -286,10 +325,55 @@ public class GameManager : MonoBehaviour
             Debug.Log(ActorQuestions.Count);
             inStateOfChoice = false;
             uiManager.HideQuestionSelect();
+            currentIteration = 0;
+            CurrentActor = 1;
             NextGameState = GameState.Answer;
             ChangeGameState(GameState.Wait);
         }
 
     }
 
+    public void LockInAnswers(string answer)
+    {
+        int answersKey = 0;
+        currentIteration++;
+        inStateOfChoice = false;
+        uiManager.ResetAnswers();
+
+        if (CurrentActor == 1)
+        {
+            Actor1Answers[1] = answer;
+            CurrentActor++;
+            NextGameState = GameState.Answer;
+            ChangeGameState(GameState.Wait);
+        }
+        else if(CurrentActor == 2)
+        {
+            Actor2Answers[2] = answer;
+            CurrentActor++;
+            NextGameState = GameState.AIAnswer;
+            ChangeGameState(NextGameState);
+        }
+        else if(CurrentActor == 3)
+        {
+            Actor3Answers[3] = answer;
+            CurrentActor++;
+            NextGameState = GameState.AIAnswer;
+            ChangeGameState(NextGameState);
+        }
+        else if (CurrentActor == 4)
+        {
+            Actor3Answers[4] = answer;
+            CurrentActor++;
+            NextGameState = GameState.AIAnswer;
+            ChangeGameState(NextGameState);
+        }
+        else if (CurrentActor == 5)
+        {
+            Actor3Answers[5] = answer;
+            CurrentActor++;
+            NextGameState = GameState.AIAnswer;
+            ChangeGameState(NextGameState);
+        }
+    }
 }

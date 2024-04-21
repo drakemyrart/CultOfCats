@@ -31,6 +31,7 @@ public class UIManager : MonoBehaviour
     // Answer
     [SerializeField] GameObject panel_answerSubmit;
     [SerializeField] TMP_InputField inputfield_submitAnswer;
+    [SerializeField] TMP_Text text_question;
     [SerializeField] string answerSubmitted;
 
     // Hotseat
@@ -100,7 +101,8 @@ public class UIManager : MonoBehaviour
 
     public void SubmitSelectedQuestion()
     {
-        int answerSelected = dropdown_selectQuestion.value;
+        int answerSelected = 0;
+        answerSelected = dropdown_selectQuestion.value;
         questionSelected = dropdown_selectQuestion.options[dropdown_selectQuestion.value].text;
         gameManager.LockInQuestions(questionSelected);
         //Debug.Log("Player selected: " + questionSelected);
@@ -110,11 +112,23 @@ public class UIManager : MonoBehaviour
 
     public void ShowAnswerSubmit()
     {
+        
         panel_answerSubmit.SetActive(true);
+        
     }
     public void HideAnswerSubmit()
     {
         panel_answerSubmit.SetActive(false);
+    }
+
+    public void ResetAnswers()
+    {
+        inputfield_submitAnswer.text = "";
+    }
+
+    public void LoadNextQuestion(string quest)
+    {
+        text_question.text = quest;
     }
 
     public void SetAnswer()
@@ -125,6 +139,7 @@ public class UIManager : MonoBehaviour
     public void ConfirmAnswer()
     {
         // This is the button that confirms the submitted answer
+        gameManager.LockInAnswers(answerSubmitted);
         Debug.Log("Player answered: " + answerSubmitted);
 
     }
