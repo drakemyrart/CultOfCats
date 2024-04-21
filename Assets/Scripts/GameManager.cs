@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.PlasticSCM.Editor.WebApi;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -25,6 +27,9 @@ public class GameManager : MonoBehaviour
     bool answeringDone = false;
     bool firstQuest = true;
 
+    [SerializeField]
+    GameObject[] catPrefabs = null;
+
     public Dictionary<int, string> Actors;    
     public Dictionary<string, int> ActorKeys;
     
@@ -35,7 +40,10 @@ public class GameManager : MonoBehaviour
     public Dictionary<int, string> Actor3Answers;
     public Dictionary<int, string> Actor4Answers;
     public Dictionary<int, string> Actor5Answers;
-    
+
+    public Dictionary<int, int> Actor1Choices;
+    public Dictionary<int, int> Actor2Choices;
+
 
     public Dictionary<int, string> QuestionList;
     public Dictionary<string, int> QuestionListKeys;
@@ -169,13 +177,40 @@ public class GameManager : MonoBehaviour
 
             //The question and answer state
             case GameState.Reveal:
+                if (!inStateOfChoice)
+                {
+                    Debug.Log("Reveal");
+                    inStateOfChoice = true;
+                    ShowAnswers();
+                    break;
+                }
+                if (inStateOfChoice)
+                {
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        currentQuest++;
+                        ShowAnswers();
+                    }
+                    if (currentQuest > 5)
+                    {
+                        inStateOfChoice = false;
+                        currentQuest = 1;
+                        NextGameState = GameState.Choice;
+                        ChangeGameState(GameState.Wait);
+                    }
+                }
 
-                
                 break;
 
             //The player choice state
             case GameState.Choice:
-                
+                uiManager.ShowFinalChoice();
+                if (!inStateOfChoice)
+                {
+                    Debug.Log("Choice");
+                    inStateOfChoice = true;                    
+                    break;
+                }
                 break;
                 
 
@@ -450,5 +485,42 @@ public class GameManager : MonoBehaviour
         string quest = ActorQuestions[currentQuest];
         Debug.Log(quest);
         uiManager.LoadNextQuestion(quest);
+    }
+
+    private void ShowAnswers()
+    {
+
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject obj = catPrefabs[i];
+            TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
+            text.text = "";
+
+            if (i == 0)
+            {
+                string answer = Actor1Answers[currentQuest];
+                text.text = answer;
+            }
+            else if (i == 1)
+            {
+                string answer = Actor2Answers[currentQuest];
+                text.text = answer;
+            }
+            else if (i == 2)
+            {
+                string answer = Actor3Answers[currentQuest];
+                text.text = answer;
+            }
+            else if (i == 3)
+            {
+                string answer = Actor4Answers[currentQuest];
+                text.text = answer;
+            }
+            else if (i == 4)
+            {
+                string answer = Actor5Answers[currentQuest];
+                text.text = answer; 
+            }
+        }
     }
 }
