@@ -27,8 +27,9 @@ public class GameManager : MonoBehaviour
     
     public Dictionary<int, string> ActorQuestions;
     
-    public Dictionary<int, string> ActorAnswer;
-    
+    public Dictionary<int, string> Actor1Answers;
+    public Dictionary<int, string> Actor2Answers;
+
     public Dictionary<int, string> QuestionList;
     public Dictionary<string, int> QuestionListKeys;
 
@@ -52,7 +53,11 @@ public class GameManager : MonoBehaviour
         Actors = new Dictionary<int, string>();
         ActorKeys = new Dictionary<string, int>();
         ActorQuestions = new Dictionary<int, string>();
-        ActorAnswer = new Dictionary<int, string>();
+        Actor1Answers = new Dictionary<int, string>();
+        Actor2Answers = new Dictionary<int, string>();
+        Npc1Answers = new Dictionary<int, string>();
+        Npc2Answers = new Dictionary<int, string>();
+        Npc3Answers = new Dictionary<int, string>();
 
         ChangeGameState(GameState.Start);
         ChangeNextGameState(GameState.PickQuestion);
@@ -111,12 +116,16 @@ public class GameManager : MonoBehaviour
 
             //The ai q pick state 
             case GameState.AIPickQuestion:
-                currentIteration = 0;
-                CurrentPlayer = 1;
-                NextPlayer = 2;
+                if (!inStateOfChoice)
+                {
+                    Debug.Log("AIPickQuestion");
+                    inStateOfChoice = true;
+                    RandomizeQuistionOptionsAI();
+                    break;
+                }
+                
 
-                ChangeNextGameState(GameState.Answer);
-                ChangeGameState(GameState.Wait);
+                
                 break;
 
             //The player answer state
@@ -207,6 +216,7 @@ public class GameManager : MonoBehaviour
                     {
                         string quest = QuestionList[key];
                         questionOptions.Add(quest);
+                        keys.Add(key);
                         count++;
                         Debug.Log(key);
                     }
@@ -223,6 +233,31 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void RandomizeQuistionOptionsAI()
+    {
+        string quest = "";
+        int key;
+        int count = 1;
+        if (QuestionList.Count > 0)
+        {
+            while (count < 2)
+            {
+                
+                    key = Random.Range(1, QuestionList.Count);
+                    if (!questionsUsed.Contains(key))
+                    {
+                        quest = QuestionList[key];
+                                      
+                        count++;
+                        Debug.Log(key);
+                    }
+
+              
+            }
+            LockInQuestions(quest);
+        }
+    }
+
     public void LockInQuestions(string quest)
     {
         int questKey = 0;
@@ -233,16 +268,24 @@ public class GameManager : MonoBehaviour
         questionsUsed.Add(questKey);
         if (CurrentActor < (PlayerAmount+1))
         {
+            Debug.Log(ActorQuestions.Count);
+            inStateOfChoice = false;
             NextGameState = GameState.PickQuestion;
             ChangeGameState(GameState.Wait);
-            inStateOfChoice = false;
         }
         else if (CurrentActor < (ActorAmount + 1))
         {
+            Debug.Log(ActorQuestions.Count);
+            inStateOfChoice = false;
+            uiManager.HideQuestionSelect();
             NextGameState = GameState.AIPickQuestion;
+            ChangeGameState(NextGameState);
         }
         else
         {
+            Debug.Log(ActorQuestions.Count);
+            inStateOfChoice = false;
+            uiManager.HideQuestionSelect();
             NextGameState = GameState.Answer;
             ChangeGameState(GameState.Wait);
         }
