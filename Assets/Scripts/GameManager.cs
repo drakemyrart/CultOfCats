@@ -19,8 +19,11 @@ public class GameManager : MonoBehaviour
     public static int CurrentActor = 1;
     public static int ActorAmount = 5;
     int currentIteration = 0;
+    int currentQuest = 1;
 
     bool inStateOfChoice = false;
+    bool answeringDone = false;
+    bool firstQuest = true;
 
     public Dictionary<int, string> Actors;    
     public Dictionary<string, int> ActorKeys;
@@ -140,6 +143,11 @@ public class GameManager : MonoBehaviour
                 uiManager.ShowAnswerSubmit();
                 if (!inStateOfChoice)
                 {
+                    if (firstQuest)
+                    {
+                        firstQuest = false;
+                        LoadAnswerQuest();
+                    }
                     inStateOfChoice = true;
                     Debug.Log("Answer");
                     break;
@@ -162,8 +170,7 @@ public class GameManager : MonoBehaviour
             //The question and answer state
             case GameState.Reveal:
 
-                ChangeNextGameState(GameState.Reveal);
-                ChangeGameState(GameState.Wait);
+                
                 break;
 
             //The player choice state
@@ -277,7 +284,6 @@ public class GameManager : MonoBehaviour
     {
         string quest = "";
         int key;
-        int count = 1;
         if (CurrentActor == 3)
         {
             key = Random.Range(1, Npc1Answers.Count);
@@ -335,45 +341,114 @@ public class GameManager : MonoBehaviour
 
     public void LockInAnswers(string answer)
     {
-        int answersKey = 0;
         currentIteration++;
         inStateOfChoice = false;
         uiManager.ResetAnswers();
 
         if (CurrentActor == 1)
         {
-            Actor1Answers[1] = answer;
-            CurrentActor++;
-            NextGameState = GameState.Answer;
-            ChangeGameState(GameState.Wait);
+            if (currentQuest < 5)
+            {
+                Actor1Answers[currentQuest] = answer;
+                currentQuest++;
+                LoadAnswerQuest();
+            }
+            else if(currentQuest > 4)
+            {
+                Actor1Answers[currentQuest] = answer;
+                CurrentActor++;
+                currentQuest = 1;
+                answeringDone = false;
+                firstQuest = true;
+                NextGameState = GameState.Answer;
+                ChangeGameState(GameState.Wait);
+            }
+            
+            
         }
         else if(CurrentActor == 2)
         {
-            Actor2Answers[2] = answer;
-            CurrentActor++;
-            NextGameState = GameState.AIAnswer;
-            ChangeGameState(NextGameState);
+
+            if (currentQuest < 5)
+            {
+                Actor2Answers[currentQuest] = answer;
+                currentQuest++;
+                LoadAnswerQuest();
+            }
+            else if(currentQuest > 4)
+            {
+                Actor2Answers[currentQuest] = answer;
+                CurrentActor++;
+                currentQuest = 1;
+                answeringDone = false;
+                firstQuest = true;
+                NextGameState = GameState.AIAnswer;
+                ChangeGameState(NextGameState);
+            }
         }
         else if(CurrentActor == 3)
         {
-            Actor3Answers[3] = answer;
-            CurrentActor++;
-            NextGameState = GameState.AIAnswer;
-            ChangeGameState(NextGameState);
+            if (currentQuest < 5)
+            {
+                Actor3Answers[currentQuest] = answer;
+                currentQuest++;
+                RandomizeAnswerAI();
+            }
+            else if (currentQuest > 4)
+            {
+                Actor3Answers[currentQuest] = answer;
+                CurrentActor++;
+                currentQuest = 1;
+                answeringDone = false;
+                firstQuest = true;
+                NextGameState = GameState.AIAnswer;
+                ChangeGameState(NextGameState);
+            }
         }
         else if (CurrentActor == 4)
         {
-            Actor3Answers[4] = answer;
-            CurrentActor++;
-            NextGameState = GameState.AIAnswer;
-            ChangeGameState(NextGameState);
+            if (currentQuest < 5)
+            {
+                Actor4Answers[currentQuest] = answer;
+                currentQuest++;
+                RandomizeAnswerAI();
+            }
+            else if (currentQuest > 4)
+            {
+                Actor4Answers[currentQuest] = answer;
+                CurrentActor++;
+                currentQuest = 1;
+                answeringDone = false;
+                firstQuest = true;
+                NextGameState = GameState.AIAnswer;
+                ChangeGameState(NextGameState);
+            }
         }
         else if (CurrentActor == 5)
         {
-            Actor3Answers[5] = answer;
-            CurrentActor++;
-            NextGameState = GameState.AIAnswer;
-            ChangeGameState(NextGameState);
+            if (currentQuest < 5)
+            {
+                Actor5Answers[currentQuest] = answer;
+                currentQuest++;
+                RandomizeAnswerAI();
+            }
+            else if (currentQuest > 4)
+            {
+                Actor5Answers[currentQuest] = answer;
+                CurrentActor++;
+                currentQuest = 1;
+                answeringDone = false;
+                firstQuest = true;
+                NextGameState = GameState.Reveal;
+                ChangeGameState(GameState.Wait);
+            }
         }
+    }
+
+    private void LoadAnswerQuest()
+    {
+        string quest = ActorQuestions[currentQuest];
+        Debug.Log(quest);
+        uiManager.LoadNextQuestion(quest);
     }
 }
