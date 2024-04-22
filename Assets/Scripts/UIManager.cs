@@ -44,6 +44,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] FinalChoiceCharacter playerChoiceCharacter;
     [SerializeField] FinalChoiceDecision playerChoiceDecision;
 
+
     // Testing
     List<string> testQuestions;
 
@@ -156,6 +157,12 @@ public class UIManager : MonoBehaviour
         panel_FinalChoice.SetActive(false);
     }
 
+    public void StartDecision()
+    {
+        playerChoiceCharacter = 0;
+        playerChoiceCharacter = 0;
+    }
+
     public void SelectTargetCharacter(int character)
     {
         if (character == 0) // 0 is the value for any NPC
@@ -177,6 +184,12 @@ public class UIManager : MonoBehaviour
         {
             playerChoiceDecision = FinalChoiceDecision.Report;
         }
+        SendDecision();
+    }
+
+    public void SendDecision()
+    {
+        gameManager.LockDecision((int)playerChoiceCharacter, (int)playerChoiceDecision);
     }
 
 

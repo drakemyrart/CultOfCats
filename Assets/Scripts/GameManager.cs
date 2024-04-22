@@ -58,6 +58,12 @@ public class GameManager : MonoBehaviour
 
     UIManager uiManager;
 
+    [SerializeField] GameObject panel_finalResult;
+    [SerializeField] GameObject result_escape;
+    [SerializeField] GameObject result_fail;
+    [SerializeField] GameObject result_win;
+    [SerializeField] GameObject result_stay;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -75,6 +81,8 @@ public class GameManager : MonoBehaviour
         Npc1Answers = new Dictionary<int, string>();
         Npc2Answers = new Dictionary<int, string>();
         Npc3Answers = new Dictionary<int, string>();
+        Actor1Choices = new Dictionary<int, int>();
+        Actor2Choices = new Dictionary<int, int>();
 
         ChangeGameState(GameState.Start);
         ChangeNextGameState(GameState.PickQuestion);
@@ -83,7 +91,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-            uiManager = UIManager.instance;
+            uiManager = UIManager.instance;            
     }
 
     // Update is called once per frame
@@ -185,11 +193,6 @@ public class GameManager : MonoBehaviour
                 }
                 if (inStateOfChoice)
                 {
-                    if (Input.GetKeyDown(KeyCode.Space))
-                    {
-                        currentQuest++;
-                        ShowAnswers();
-                    }
                     if (currentQuest > 5)
                     {
                         inStateOfChoice = false;
@@ -197,6 +200,12 @@ public class GameManager : MonoBehaviour
                         NextGameState = GameState.Choice;
                         ChangeGameState(GameState.Wait);
                     }
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        currentQuest++;
+                        ShowAnswers();
+                    }
+                    
                 }
 
                 break;
@@ -207,6 +216,7 @@ public class GameManager : MonoBehaviour
                 if (!inStateOfChoice)
                 {
                     Debug.Log("Choice");
+                    CurrentActor = 1;
                     inStateOfChoice = true;                    
                     break;
                 }
@@ -215,7 +225,13 @@ public class GameManager : MonoBehaviour
 
             //The choice result state
             case GameState.Result:
-
+                if (!inStateOfChoice)
+                {
+                    Debug.Log("Result");
+                    inStateOfChoice = true;
+                    ResolveChoice();
+                    break;
+                }
                 break;
         }
     }
@@ -469,7 +485,7 @@ public class GameManager : MonoBehaviour
             else if (currentQuest > 4)
             {
                 Actor5Answers[currentQuest] = answer;
-                CurrentActor++;
+                CurrentActor = 1;
                 currentQuest = 1;
                 answeringDone = false;
                 firstQuest = true;
@@ -491,6 +507,13 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++)
         {
+            if (currentQuest > 5)
+            {
+                inStateOfChoice = false;
+                currentQuest = 1;
+                NextGameState = GameState.Choice;
+                ChangeGameState(GameState.Wait);
+            }
             GameObject obj = catPrefabs[i];
             TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
             text.text = "";
@@ -519,6 +542,130 @@ public class GameManager : MonoBehaviour
             {
                 string answer = Actor5Answers[currentQuest];
                 text.text = answer; 
+            }
+        }
+    }
+
+    public void LockDecision(int actor, int choice)
+    {
+        if(CurrentActor < 2)
+        {
+            
+            Actor1Choices[1] = actor;
+            Actor1Choices[2] = choice;
+            CurrentActor ++;
+            NextGameState = GameState.Choice;
+            ChangeGameState(GameState.Wait);
+
+
+        }
+        else if (CurrentActor > 1)
+        {
+            Actor2Choices[1] = actor;
+            Actor2Choices[2] = choice;            
+            NextGameState = GameState.Result;
+            ChangeGameState(GameState.Wait);
+
+
+        }
+    }
+
+    void ResolveChoice()
+    {
+        panel_finalResult.SetActive(true);
+
+
+        if (Actor1Choices[1] == 1 && Actor2Choices[1] == 1)
+        {
+            if (Actor1Choices[2] == 1 && Actor2Choices[2] == 1)
+            {
+                //escape
+                result_escape.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
+            {
+                //fail
+                result_fail.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
+            {
+                //win
+                result_win.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
+            {
+                //fail
+                result_fail.SetActive(true);
+            }
+
+        }
+        else if (Actor1Choices[1] == 1 && Actor2Choices[1] == 0)
+        {
+            if (Actor1Choices[2] == 1 && Actor2Choices[2] == 1)
+            {
+                //stay
+                result_stay.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
+            {
+                //stay
+                result_stay.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
+            {
+                //win
+                result_win.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
+            {
+                //stay
+                result_stay.SetActive(true);
+            }
+        }
+        else if (Actor1Choices[1] == 0 && Actor2Choices[1] == 1)
+        {
+            if (Actor1Choices[2] == 1 && Actor2Choices[2] == 1)
+            {
+                //stay
+                result_stay.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
+            {
+                //stay
+                result_stay.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
+            {
+                //win
+                result_win.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
+            {
+                //stay
+                result_stay.SetActive(true);
+            }
+        }
+        else if (Actor1Choices[1] == 0 && Actor2Choices[1] == 0)
+        {
+            if (Actor1Choices[2] == 1 && Actor2Choices[2] == 1)
+            {
+                //fail
+                result_fail.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
+            {
+                //fail
+                result_fail.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
+            {
+                //fail
+                result_fail.SetActive(true);
+            }
+            else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
+            {
+                //fail
+                result_fail.SetActive(true);
             }
         }
     }
