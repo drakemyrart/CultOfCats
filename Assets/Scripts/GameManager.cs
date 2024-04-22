@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject[] catPrefabs = null;
 
+    [SerializeField]
+    GameObject catLeaderPrefab = null;
+
     public Dictionary<int, string> Actors;    
     public Dictionary<string, int> ActorKeys;
     
@@ -505,7 +508,10 @@ public class GameManager : MonoBehaviour
 
     private void ShowAnswers()
     {
-
+        GameObject cultLeader = catLeaderPrefab;
+        TMP_Text quest = cultLeader.GetComponentInChildren<TMP_Text>();
+        quest.text = "";
+        quest.text = ActorQuestions[currentQuest];
         for (int i = 0; i < 5; i++)
         {
             if (currentQuest > 5)

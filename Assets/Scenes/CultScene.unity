@@ -9969,6 +9969,7 @@ MonoBehaviour:
   - {fileID: 974204408}
   - {fileID: 811990093}
   - {fileID: 1331495335}
+  catLeaderPrefab: {fileID: 6398574580225470812}
   panel_finalResult: {fileID: 1630883100}
   result_escape: {fileID: 1630883099}
   result_fail: {fileID: 1630883098}
@@ -13479,6 +13480,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80c79b089d8aea04cbcdcc2ae17229ce, type: 3}
+--- !u!1 &6398574580225470812 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3274140254675676732, guid: 80c79b089d8aea04cbcdcc2ae17229ce,
+    type: 3}
+  m_PrefabInstance: {fileID: 6398574580225470811}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
