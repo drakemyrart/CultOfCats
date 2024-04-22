@@ -225,6 +225,7 @@ public class GameManager : MonoBehaviour
 
             //The choice result state
             case GameState.Result:
+                panel_finalResult.SetActive(true);
                 if (!inStateOfChoice)
                 {
                     Debug.Log("Result");
@@ -550,9 +551,10 @@ public class GameManager : MonoBehaviour
     {
         if(CurrentActor < 2)
         {
-            
+            Debug.Log("Current Player chosen: " + CurrentActor +actor +choice);
             Actor1Choices[1] = actor;
             Actor1Choices[2] = choice;
+            Debug.Log(Actor1Choices[1] + " " + Actor1Choices[2]);
             CurrentActor ++;
             NextGameState = GameState.Choice;
             ChangeGameState(GameState.Wait);
@@ -561,8 +563,11 @@ public class GameManager : MonoBehaviour
         }
         else if (CurrentActor > 1)
         {
+            Debug.Log("Current Player chosen: " + CurrentActor + actor + choice);
             Actor2Choices[1] = actor;
-            Actor2Choices[2] = choice;            
+            Actor2Choices[2] = choice;
+            Debug.Log(Actor2Choices[1] + " " + Actor2Choices[2]);
+            inStateOfChoice = false;
             NextGameState = GameState.Result;
             ChangeGameState(GameState.Wait);
 
@@ -572,7 +577,7 @@ public class GameManager : MonoBehaviour
 
     void ResolveChoice()
     {
-        panel_finalResult.SetActive(true);
+        
 
 
         if (Actor1Choices[1] == 1 && Actor2Choices[1] == 1)
@@ -599,7 +604,7 @@ public class GameManager : MonoBehaviour
             }
 
         }
-        else if (Actor1Choices[1] == 1 && Actor2Choices[1] == 0)
+        else if (Actor1Choices[1] == 1 && Actor2Choices[1] == 2)
         {
             if (Actor1Choices[2] == 1 && Actor2Choices[2] == 1)
             {
@@ -622,7 +627,7 @@ public class GameManager : MonoBehaviour
                 result_stay.SetActive(true);
             }
         }
-        else if (Actor1Choices[1] == 0 && Actor2Choices[1] == 1)
+        else if (Actor1Choices[1] == 2 && Actor2Choices[1] == 1)
         {
             if (Actor1Choices[2] == 1 && Actor2Choices[2] == 1)
             {
@@ -645,7 +650,7 @@ public class GameManager : MonoBehaviour
                 result_stay.SetActive(true);
             }
         }
-        else if (Actor1Choices[1] == 0 && Actor2Choices[1] == 0)
+        else if (Actor1Choices[1] == 2 && Actor2Choices[1] == 2)
         {
             if (Actor1Choices[2] == 1 && Actor2Choices[2] == 1)
             {
