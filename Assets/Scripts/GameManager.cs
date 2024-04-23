@@ -59,6 +59,8 @@ public class GameManager : MonoBehaviour
     List<int> questionsUsed = new List<int>();
     List<string> questionOptions = new List<string>();
 
+    public List<GameObject> speechBubbles = new List<GameObject>();
+
     UIManager uiManager;
 
     [SerializeField] GameObject panel_finalResult;
@@ -508,6 +510,11 @@ public class GameManager : MonoBehaviour
 
     private void ShowAnswers()
     {
+        foreach (GameObject bubble in speechBubbles)
+        {
+            bubble.SetActive(true);
+        }
+
         GameObject cultLeader = catLeaderPrefab;
         TMP_Text quest = cultLeader.GetComponentInChildren<TMP_Text>();
         quest.text = "";
