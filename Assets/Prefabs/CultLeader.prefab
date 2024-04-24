@@ -778,6 +778,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3905836352376153925, guid: 61c98f026995ee94781ba095e66b646a,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563686451396450242, guid: 61c98f026995ee94781ba095e66b646a,
+        type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6721793682995259684, guid: 61c98f026995ee94781ba095e66b646a,
         type: 3}
       propertyPath: m_Name

@@ -44,9 +44,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] FinalChoiceCharacter playerChoiceCharacter;
     [SerializeField] FinalChoiceDecision playerChoiceDecision;
 
+    // Continue button
+    [SerializeField] GameObject panel_ContinueButton;
 
-    // Testing
-    List<string> testQuestions;
+    // Resolution screen
+    [SerializeField] TMP_Text text_resolution;
 
     private void Awake()
     {
@@ -62,12 +64,13 @@ public class UIManager : MonoBehaviour
         HideFinalChoice();
     }
 
-    private void Update()
+    public void OnButtonContinue()
     {
-/*        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SetQuestionOptions(testQuestions);
-        }*/
+        gameManager.ButtonPressesSpace();
+    }
+    public void ShowcContinueButton()
+    {
+        panel_ContinueButton.SetActive(true);
     }
 
     // ------- Hotseat Change --------------------------
@@ -192,8 +195,9 @@ public class UIManager : MonoBehaviour
         gameManager.LockDecision((int)playerChoiceCharacter, (int)playerChoiceDecision);
     }
 
-
-
-
+    public void SetResolutionText(string resolution)
+    {
+        text_resolution.text = resolution;
+    }
 
 }

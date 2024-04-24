@@ -69,6 +69,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject result_win;
     [SerializeField] GameObject result_stay;
 
+    [SerializeField] bool spaceWasPressed = false;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -107,8 +109,9 @@ public class GameManager : MonoBehaviour
             // the intro state
             case GameState.Start:
                 //TODO put in info dump;
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (spaceWasPressed)
                 {
+                    spaceWasPressed = false;
                     ChangeGameState(GameState.Wait);
                     break;
                 }
@@ -120,10 +123,11 @@ public class GameManager : MonoBehaviour
                 uiManager.ShowHotseatSwitch();
 
                 //Debug.Log("Wait");
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (spaceWasPressed)
                 {
+                    spaceWasPressed = false;
                     uiManager.HideHotseatSwitch();
-                    ChangeGameState (NextGameState); 
+                    ChangeGameState (NextGameState);
                     break;
                 }
 
@@ -205,9 +209,10 @@ public class GameManager : MonoBehaviour
                         NextGameState = GameState.Choice;
                         ChangeGameState(GameState.Wait);
                     }
-                    if (Input.GetKeyDown(KeyCode.Space))
+                    if (spaceWasPressed)
                     {
                         currentQuest++;
+                        spaceWasPressed = false;
                         ShowAnswers();
                     }
                     
@@ -240,6 +245,13 @@ public class GameManager : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    // hacky method to replace the Input.GetKeyDown(KeyCode.Space) in the Update loop with a UI button press
+    // this method is called by UIManager
+    public void ButtonPressesSpace()
+    {
+        spaceWasPressed = true;
     }
 
     public void ChangeGameState(GameState state)
@@ -514,11 +526,16 @@ public class GameManager : MonoBehaviour
         {
             bubble.SetActive(true);
         }
+        
 
         GameObject cultLeader = catLeaderPrefab;
         TMP_Text quest = cultLeader.GetComponentInChildren<TMP_Text>();
         quest.text = "";
-        quest.text = ActorQuestions[currentQuest];
+        if (currentQuest < 6)
+        {
+            quest.text = ActorQuestions[currentQuest];
+            uiManager.ShowcContinueButton();
+        }
         for (int i = 0; i < 5; i++)
         {
             if (currentQuest > 5)
@@ -599,21 +616,25 @@ public class GameManager : MonoBehaviour
             {
                 //escape
                 result_escape.SetActive(true);
+                uiManager.SetResolutionText("Reaffirming your humanity, two human players manage to escape from the ammonia-scented pits and make their way into the sunlight. Taking a moment to savor the feeling on your skin, you turn to each other, and neither is really sure who first asks... Do you like dogs?");
             }
             else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
             {
                 //fail
                 result_fail.SetActive(true);
+                uiManager.SetResolutionText("Maybe neither of you ever really believed in the Cult of Cat, but having failed to be certain of your allies, you're doubts are revealed as foolish. The eldritch feline beast rises like a fuzzy kaiju before you, cat tails whipping back and forth around the gaping maw that descends toward you to swallow you up. That means he's excited, says one of the cultists as the razor sharp hooked shaped teeth tear into your flesh. Those are the last words you ever hear.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
             {
                 //win
                 result_win.SetActive(true);
+                uiManager.SetResolutionText("One of you looks on without a hint of shame as the other is dragged off. An all-too-human wail echoes off the walls as the darkness closes around the traitor. Another member leans in, They didn't even sound like a cat. Who even invited them? The faithful turn their backs to each other in a display of feline solidarity, and a rumbling purr echoes through the chamber.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
             {
                 //fail
                 result_fail.SetActive(true);
+                uiManager.SetResolutionText("Maybe neither of you ever really believed in the Cult of Cat, but having failed to be certain of your allies, you're doubts are revealed as foolish. The eldritch feline beast rises like a fuzzy kaiju before you, cat tails whipping back and forth around the gaping maw that descends toward you to swallow you up. That means he's excited, says one of the cultists as the razor sharp hooked shaped teeth tear into your flesh. Those are the last words you ever hear.");
             }
 
         }
@@ -623,21 +644,25 @@ public class GameManager : MonoBehaviour
             {
                 //stay
                 result_stay.SetActive(true);
+                uiManager.SetResolutionText("You creep to the exit with your chosen accomplice. Your first hint that you have chosen poorly is the dry hissing that greets you as you turn the corner. One of you freezes, and the hooded figures move past you to the one who has failed their loyalty test. A deep growl overwhelms the hissing and a twisted graceful form leaps past the faithful, tearing pitilessly into the obvious traitor. Such is the price of disloyalty.");
             }
             else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
             {
                 //stay
                 result_stay.SetActive(true);
+                uiManager.SetResolutionText("You creep to the exit with your chosen accomplice. Your first hint that you have chosen poorly is the dry hissing that greets you as you turn the corner. One of you freezes, and the hooded figures move past you to the one who has failed their loyalty test. A deep growl overwhelms the hissing and a twisted graceful form leaps past the faithful, tearing pitilessly into the obvious traitor. Such is the price of disloyalty.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
             {
                 //win
                 result_win.SetActive(true);
+                uiManager.SetResolutionText("One of you looks on without a hint of shame as the other is dragged off. An all-too-human wail echoes off the walls as the darkness closes around the traitor. Another member leans in, They didn't even sound like a cat. Who even invited them? The faithful turn their backs to each other in a display of feline solidarity, and a rumbling purr echoes through the chamber.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
             {
                 //stay
                 result_stay.SetActive(true);
+                uiManager.SetResolutionText("");
             }
         }
         else if (Actor1Choices[1] == 2 && Actor2Choices[1] == 1)
@@ -646,21 +671,25 @@ public class GameManager : MonoBehaviour
             {
                 //stay
                 result_stay.SetActive(true);
+                uiManager.SetResolutionText("You creep to the exit with your chosen accomplice. Your first hint that you have chosen poorly is the dry hissing that greets you as you turn the corner. One of you freezes, and the hooded figures move past you to the one who has failed their loyalty test. A deep growl overwhelms the hissing and a twisted graceful form leaps past the faithful, tearing pitilessly into the obvious traitor. Such is the price of disloyalty.");
             }
             else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
             {
                 //stay
                 result_stay.SetActive(true);
+                uiManager.SetResolutionText("You creep to the exit with your chosen accomplice. Your first hint that you have chosen poorly is the dry hissing that greets you as you turn the corner. One of you freezes, and the hooded figures move past you to the one who has failed their loyalty test. A deep growl overwhelms the hissing and a twisted graceful form leaps past the faithful, tearing pitilessly into the obvious traitor. Such is the price of disloyalty.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
             {
                 //win
                 result_win.SetActive(true);
+                uiManager.SetResolutionText("One of you looks on without a hint of shame as the other is dragged off. An all-too-human wail echoes off the walls as the darkness closes around the traitor. Another member leans in, They didn't even sound like a cat. Who even invited them? The faithful turn their backs to each other in a display of feline solidarity, and a rumbling purr echoes through the chamber.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
             {
                 //stay
                 result_stay.SetActive(true);
+                uiManager.SetResolutionText("You creep to the exit with your chosen accomplice. Your first hint that you have chosen poorly is the dry hissing that greets you as you turn the corner. One of you freezes, and the hooded figures move past you to the one who has failed their loyalty test. A deep growl overwhelms the hissing and a twisted graceful form leaps past the faithful, tearing pitilessly into the obvious traitor. Such is the price of disloyalty.");
             }
         }
         else if (Actor1Choices[1] == 2 && Actor2Choices[1] == 2)
@@ -669,21 +698,25 @@ public class GameManager : MonoBehaviour
             {
                 //fail
                 result_fail.SetActive(true);
+                uiManager.SetResolutionText("Maybe neither of you ever really believed in the Cult of Cat, but having failed to be certain of your allies, you're doubts are revealed as foolish. The eldritch feline beast rises like a fuzzy kaiju before you, cat tails whipping back and forth around the gaping maw that descends toward you to swallow you up. That means he's excited, says one of the cultists as the razor sharp hooked shaped teeth tear into your flesh. Those are the last words you ever hear.");
             }
             else if (Actor1Choices[2] == 1 && Actor2Choices[2] == 2)
             {
                 //fail
                 result_fail.SetActive(true);
+                uiManager.SetResolutionText("Maybe neither of you ever really believed in the Cult of Cat, but having failed to be certain of your allies, you're doubts are revealed as foolish. The eldritch feline beast rises like a fuzzy kaiju before you, cat tails whipping back and forth around the gaping maw that descends toward you to swallow you up. That means he's excited, says one of the cultists as the razor sharp hooked shaped teeth tear into your flesh. Those are the last words you ever hear.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 1)
             {
                 //fail
                 result_fail.SetActive(true);
+                uiManager.SetResolutionText("Maybe neither of you ever really believed in the Cult of Cat, but having failed to be certain of your allies, you're doubts are revealed as foolish. The eldritch feline beast rises like a fuzzy kaiju before you, cat tails whipping back and forth around the gaping maw that descends toward you to swallow you up. That means he's excited, says one of the cultists as the razor sharp hooked shaped teeth tear into your flesh. Those are the last words you ever hear.");
             }
             else if (Actor1Choices[2] == 2 && Actor2Choices[2] == 2)
             {
                 //fail
                 result_fail.SetActive(true);
+                uiManager.SetResolutionText("Maybe neither of you ever really believed in the Cult of Cat, but having failed to be certain of your allies, you're doubts are revealed as foolish. The eldritch feline beast rises like a fuzzy kaiju before you, cat tails whipping back and forth around the gaping maw that descends toward you to swallow you up. That means he's excited, says one of the cultists as the razor sharp hooked shaped teeth tear into your flesh. Those are the last words you ever hear.");
             }
         }
     }
